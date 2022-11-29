@@ -9,7 +9,7 @@
 (progn
   (org-mode)
   ;;;~ set custom init file 
-  (setq user-init-file "~/.emacs.d/init-openbox.el")
+  (setq user-init-file "~/Projects/dot-emacs/init-openbox.el")
   ;;;~ open the custom init file
   (find-file user-init-file)
   ;;;~ load other init files:
