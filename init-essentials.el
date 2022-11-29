@@ -5,7 +5,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2022-11-29 22:11:47
+;; Updated: 2022-11-30 00:49:56
 ;; Source: init-python-env.org
 ;;
 
@@ -1077,8 +1077,7 @@ A remastered version of the function `browse-url-firefox'."
 (use-package virtualenvwrapper
   :if (eq system-type 'gnu/linux)
   :ensure-system-package
-  ((pip . python-pip)
-   (virtualenvwrapper . "pip install virtualenvwrapper"))
+  (virtualenvwrapper . "pip install virtualenvwrapper")
   :init
   ;;;~ set python virtual environments location
   (setq venv-location "~/.virtualenvs")

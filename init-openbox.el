@@ -47,7 +47,6 @@
     (other-frame 1)
     (modify-frame-location-upper-right)
     (switch-to-buffer "*scratch*")
-    (find-file
-     "~/Projects/dot-emacs/src-org/init-essentials.org")
+    (dired "~/Projects/dot-emacs/src-org/")
     (other-frame 1)
     ))
