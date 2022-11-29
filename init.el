@@ -15,4 +15,4 @@
 
 ;;;~ emacs essential init configuration
 
-(load-file "~/.emacs.d/init-essentials.el")
+(load-file "~/Projects/dot-emacs/init-essentials.el")

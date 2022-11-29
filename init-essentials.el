@@ -5,7 +5,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2022-11-18 08:09:46
+;; Updated: 2022-11-29 22:11:47
 ;; Source: init-python-env.org
 ;;
 
@@ -694,6 +694,12 @@ fill the rest of the line with the active comment symbol 'comment-start'."
 
 ;;;; (3/3) THIRD PARTY PACKAGES ----------------------------
 
+;;;~ support to download global binaries required by third party packages
+
+(use-package use-package-ensure-system-package
+  :ensure t
+  )
+
 ;;;~ function to download elisp file if not prevously present
 
 (defun download-required-elisp-file (my-file my-url)
@@ -1060,35 +1066,63 @@ A remastered version of the function `browse-url-firefox'."
   :bind ("C-x g" . magit-status)
   )
 
-;;;~ pyenv (support to use multiple python versions)
+;;;~ support to use multiple python versions
 
 (use-package pyenv-mode
   :ensure t
   )
 
-
-;;;~ virtualwrapper (support for python virtual environments)
+;;;~ support for python virtual environments
 
 (use-package virtualenvwrapper
-  :ensure t
+  :if (eq system-type 'gnu/linux)
+  :ensure-system-package
+  ((pip . python-pip)
+   (virtualenvwrapper . "pip install virtualenvwrapper"))
   :init
   ;;;~ set python virtual environments location
   (setq venv-location "~/.virtualenvs")
   :config
-  ;;;~ create directory location if it not exists
+  ;;;~ create venv-location if it not exists
   (if nil (file-directory-p venv-location) (mkdir venv-location t))
-  ;;;~ create standard environment "biopython" if it not exists
-   ;;;~ IMPORTANT: venv-get-candidates shows virtual environments available
+  
+  ;;;~ create standard python environment 'biopython' if it not exists
+  ;;;~ important: 'venv-get-candidates' shows virtual environments available
   (when (or (not (venv-get-candidates))
-	  ;; (not (string-match-p
-	  ;; 	(regexp-quote "biopython") (venv-get-candidates))))
-	  (not (member "biopython" (venv-get-candidates))))
-    ;;;~ create environment
+	    (not (member "biopython" (venv-get-candidates))))
     (venv-mkvirtualenv "biopython")
-    ;;;~ include python packages required for emacs : "epc jedi pytz"
+  ;;;~ include python packages required for emacs : "epc jedi pytz"
+  ;;;~ include python packages required for bioinformatics : "biopython"
     (venv-with-virtualenv-shell-command
      "biopython" "pip install epc jedi pytz biopython")
     )
+
+  (setq-default python-indent-offset 2) ;4 (deprecated 2021-01-21)
+  ;; set python guess indent
+  (setq python-indent-guess-indent-offset t)
+  ;; silence the warning of python guess indent
+  (setq python-indent-guess-indent-offset-verbose nil)
+  ;; if you want interactive shell support
+  (venv-initialize-interactive-shells)
+  ;; if you want eshell support
+  (venv-initialize-eshell)
+  (setq python-shell-completion-native-enable nil)
+  )
+
+;;;~ python auto-completiom
+
+(use-package jedi-core
+  :ensure t
+  :config
+  (setq python-environment-directory "~/.virtualenvs")
+  )
+
+
+(use-package jedi
+  :ensure t
+  :hook (python-mode . jedi:setup)
+  :config
+  (setq jedi:complete-on-dot t)
   )
 
 ;;;~ emacs snippets
