@@ -8,16 +8,18 @@
 ;;;~ FRAME 1: load custom init file: user-init-file
 (progn
   (org-mode)
+  (setq user-init-file "~/.emacs.d/init-openbox.el")
+  (if (not (file-exists-p user-init-file))
+      (shell-command "cd ~/Projects/dot-emacs; xterm -rv -e \"read -p 'REQUIREMENT: exec bootstrap to run emacs?[y/N]' answer; [[ $$answer =~ ^([yY])$ ]] && ./bootstrap; exec sh\""))
   ;;;~ set custom init file 
-  (setq user-init-file "~/Projects/dot-emacs/init-openbox.el")
   ;;;~ open the custom init file
   (find-file user-init-file)
   ;;;~ load other init files:
   ;;;~  * basic configuration
-  (load-file "~/Projects/dot-emacs/init-essentials.el")
+  (load-file "~/.emacs.d/init-essentials.el")
   ;; (find-file "~/Projects/dot-emacs/init-essentials.el")
   ;;;~  * show startup message
-  (load-file "~/Projects/dot-emacs/init-startup-time.el")
+  (load-file "~/.emacs.d/init-startup-time.el")
   ;; (find-file "~/Projects/dot-emacs/init-startup-time.el")
   ;;;~  * dont show startup statistics
   (remove-hook 'emacs-startup-hook 'use-package-report)
