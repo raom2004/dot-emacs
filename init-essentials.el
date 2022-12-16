@@ -317,6 +317,18 @@
   :config
   (setq tramp-shell-prompt-pattern "\\(?:^\\|\\)[^]#$%>
 ]*#?[]#$%>].* *\\(\\[[[:digit:];]*[[:alpha:]] *\\)*")
+  ;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+  ;; source:
+  ;; https://emacs.stackexchange.com/questions/44664/apply-ansi-color-escape-sequences-for-org-babel-results
+  (defun ek/babel-ansi ()
+    (when-let ((beg (org-babel-where-is-src-block-result nil nil)))
+      (save-excursion
+	(goto-char beg)
+	(when (looking-at org-babel-result-regexp)
+          (let ((end (org-babel-result-end))
+		(ansi-color-context-region nil))
+            (ansi-color-apply-on-region beg end))))))
+  (add-hook 'org-babel-after-execute-hook 'ek/babel-ansi)
   )
 
 ;;;~ unset emacs predefined key bindings 
