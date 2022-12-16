@@ -1,3 +1,9 @@
+#+PROPERTY: header-args :tangle ../init-essentials.el
+
+* Header
+
+# #+begin_src emacs-lisp :comments link :padline true
+#+begin_src emacs-lisp
 ;; init-essentials.el -- Emacs init file -*- lexical-binding: t -*-
 ;;
 ;;;; ====================== HEADER =========================
@@ -8,9 +14,18 @@
 ;; Updated: 2022-12-16 21:18:12
 ;; Source: init-essentials.org
 ;;
+#+end_src
 
+* CODE
+#+begin_src emacs-lisp
 ;;;; Code:
 
+
+#+end_src
+
+** ACCELERATE EMACS STARTUP
+
+#+begin_src emacs-lisp
 ;;;; ================ Accelerate Emacs Startup =============
 
 (defvar file-name-handler-alist-original file-name-handler-alist)
@@ -38,8 +53,20 @@
 	      (garbage-collect)
 	      (setq gc-cons-threshold arch/gc-cons-threshold)))
 
+
+#+end_src
+
+
+** EMACS PACKAGE MANAGEMENT
+
+#+begin_src emacs-lisp
 ;;;; =============== EMACS PACKAGE MANAGMENT ===============
 
+#+end_src
+
+*** Avoid warning about deprecated package =cl=
+
+#+begin_src emacs-lisp
 ;;;~ Avoid warning about deprecated package cl
 
 (setq byte-compile-warnings '(cl-functions))
@@ -47,6 +74,11 @@
 ;; (with-no-warnings (require 'cl))
 ;; (eval-when-compile (require 'cl))
 
+
+#+end_src
+
+*** Package setup
+#+begin_src emacs-lisp
 ;;;~ package setup
 
 (require 'package)
@@ -75,10 +107,32 @@
   (add-hook 'emacs-startup-hook 'use-package-report)
   )
 
+
+#+end_src
+
+references: emacs startup summary ([[https://emacs.stackexchange.com/questions/14551/whats-the-difference-between-after-init-hook-and-emacs-startup-hook][URL]])
+
+
+** EMACS SETTINGS
+
+#+begin_src emacs-lisp
 ;;;; =================== EMACS SETTINGS ====================
 
+
+#+end_src
+
+*** (1/3) SETTINGS WITHOUT CORRESPONDING PACKAGES
+
+
+#+begin_src emacs-lisp
 ;;;; (1/3) SETTINGS WITHOUT CORRESPONDING PACKAGES ---------
 
+
+#+end_src
+
+**** Emacs basic customizations: variables, toolbar, messages, etc 
+
+#+begin_src emacs-lisp
 ;;;~ Emacs basic customizations: variables, toolbar, messages, etc 
 
 (use-package emacs
@@ -156,8 +210,35 @@
 	 ("<f12>" . display-line-numbers-mode)); show line numbers
   )
 
+
+#+end_src
+
+
+*** (2/3) BUILTIN PACKAGES
+
+
+#+begin_src emacs-lisp
 ;;;; (2/3) BUILTIN PACKAGES ---------------------------------
 
+#+end_src
+
+**** theme
+
+tiny customizations has been made using the =custom-theme-set-faces=
+
+source:
+https://emacs.stackexchange.com/questions/17431/how-do-i-change-portions-of-a-custom-theme
+
+A reference of the list options available, can be found here
+- [[help:face-attribute-name-alist]]
+- [[file:/usr/share/emacs/28.2/lisp/faces.el.gz::defun set-face-attribute (face frame &rest args][set face attributes]]
+- [[file:src-org/complementary-files/set_face_attribute_reference.el::;; :weight - `ultra-bold', `extra-bold', `bold', `semi-bold',][reference file]]
+- find installed fonts ([[https://ostechnix.com/find-installed-fonts-commandline-linux/][URL]])
+- filter fonts by language compatibility (e.g.: fc-list :lang=ja [[https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes][URL]])
+- filter fonts by family & font style (e.g.: fc-list :Dejavu:style=Book)
+- show font sample for comparison ([[https://askubuntu.com/questions/1167358/how-can-i-make-all-fonts-show-a-sample-string-for-comparison][URL]])
+  
+#+begin_src emacs-lisp
 ;;;~ theme
 
 (use-package custom
@@ -251,6 +332,12 @@
    ); end custom-theme-set-faces
   ); end custom
 
+
+#+end_src
+
+**** update file changes
+
+#+begin_src emacs-lisp
 ;;;~ update file changes
 
 (use-package autorevert
@@ -258,6 +345,12 @@
   :config
   (global-auto-revert-mode 1))
 
+
+#+end_src
+
+**** delete selected region such as MS-Word (word, etc)
+
+#+begin_src emacs-lisp
 ;;;~ delete selected region such as MS-Word (word, etc)
 
 (use-package delsel
@@ -266,6 +359,12 @@
   (delete-selection-mode 1)
   )
 
+
+#+end_src
+
+**** backup configuration (source: catchestocatches.com)
+
+#+begin_src emacs-lisp
 ;;;~ backup configuration (source: catchestocatches.com)
 
 (use-package files
@@ -282,6 +381,12 @@
    version-control t           ; number backups
    vc-make-backup-files t))    ; backup version controlled files
 
+
+#+end_src
+
+**** enable list of opened recent files
+
+#+begin_src emacs-lisp
 ;;;~ enable list of opened recent files
 
 (use-package recentf
@@ -295,6 +400,12 @@
   ;; (run-at-time nil (* 5 60) 'recentf-save-list) ; save recent files
   :bind (("C-x f" . recentf-open-files)))
 
+
+#+end_src
+
+**** display line mode with line & column numbers
+
+#+begin_src emacs-lisp
 ;;;~ display line mode with line & column numbers
 
 (use-package simple
@@ -312,6 +423,12 @@
    ("C-x 5 O" . other-frame))
   )
 
+
+#+end_src
+
+**** configure terminal and emacs
+
+#+begin_src emacs-lisp
 (use-package tramp
   :ensure nil
   :config
@@ -330,6 +447,12 @@
   (add-hook 'org-babel-after-execute-hook 'ek/babel-ansi)
   )
 
+
+#+end_src
+
+**** unset emacs predefined key bindings
+
+#+begin_src emacs-lisp
 ;;;~ unset emacs predefined key bindings 
 
 (use-package bind-key
@@ -348,6 +471,12 @@
   (global-set-key (kbd "<f6>") #'(lambda()(interactive)(insert "β")))
   )
 
+
+#+end_src
+
+**** custom user macros
+
+#+begin_src emacs-lisp
 ;;;~ custom user macros
 
 (use-package macros
@@ -363,6 +492,12 @@
 
   )
 
+
+#+end_src
+
+**** avoid emacs to overwrite customization file
+
+#+begin_src emacs-lisp
 ;;;~ avoid emacs to overwrite customization file
 
 (use-package cus-edit
@@ -371,6 +506,12 @@
   (setq custom-file null-device)
   )
 
+
+#+end_src
+
+**** frame customizations (title, cursor, location and font)
+
+#+begin_src emacs-lisp
 ;;;~ frame customizations (title, cursor, location and font)
 
 (use-package frame
@@ -588,6 +729,12 @@
    ("C-x 5 3" .	new-frame-location-upper-right))
   )
 
+
+#+end_src
+
+**** remember cursor last location
+
+#+begin_src emacs-lisp
 ;;;~ remember cursor last location
 
 (use-package saveplace
@@ -598,6 +745,12 @@
   (save-place-mode t)
   )
 
+
+#+end_src
+
+**** set cursor bookmark directory
+
+#+begin_src emacs-lisp
 ;;;~ set cursor bookmark directory 
 
 (use-package bookmark
@@ -607,6 +760,21 @@
 	(expand-file-name "bookmarks" user-emacs-directory))
   )
 
+
+#+end_src
+
+**** fill comment customized commands
+
+functions related to comment:
+(comment-column)
+(comment-fill-column)
+(fill-column)
+(syntax-table)
+(comment-start)
+(comment-end)
+(comment-use-syntax)
+
+#+begin_src emacs-lisp
 ;;;~ customized commit functions
 
 (use-package newcomment
@@ -632,6 +800,12 @@ fill the rest of the line with the active comment symbol 'comment-start'."
   :bind ("C-c f" . ra/comment-fill)
   )
 
+
+#+end_src
+
+**** fill paragraph customized commands
+
+#+begin_src emacs-lisp
 ;;;~ fill paragraph customized commands
 
 (use-package fill
@@ -709,15 +883,33 @@ fill the rest of the line with the active comment symbol 'comment-start'."
 	 ("M-ñ M-f" . fill-paragraph)
 	 ("<C-f8>" . compare-windows))
   )
+#+end_src
 
+
+*** (3/3) THIRD PARTY PACKAGES
+
+
+#+begin_src emacs-lisp
 ;;;; (3/3) THIRD PARTY PACKAGES ----------------------------
 
+
+#+end_src
+
+**** support to download global binaries required by third party packages
+
+#+begin_src emacs-lisp
 ;;;~ support to download global binaries required by third party packages
 
 (use-package use-package-ensure-system-package
   :ensure t
   )
 
+
+#+end_src
+
+**** function to download elisp file if not prevously present
+
+#+begin_src emacs-lisp
 ;;;~ function to download elisp file if not prevously present
 
 (defun download-required-elisp-file (my-file my-url)
@@ -742,6 +934,12 @@ to automatically download elisp files required for 3rd party packages.
 	(url-copy-file my-url my-file t))))
   )
 
+
+#+end_src
+
+**** spell correction:
+
+#+begin_src emacs-lisp
 ;;;~ spell correction: 1. hooks activation
 
 (use-package flyspell
@@ -759,8 +957,18 @@ to automatically download elisp files required for 3rd party packages.
   (add-hook 'python-mode-hook (lambda () (flyspell-prog-mode)))
   )
 
+
+#+end_src
+
+#+begin_src emacs-lisp
 ;;;~ spell correction: 2. dictionaries (US, DE, en_med_glut)
 
+
+#+end_src
+
+**** syntax checking
+
+#+begin_src emacs-lisp
 ;;;~ syntax checking
 ;;~ check languages available and supported fot emacs+flycheck
 ;;~ source: https://www.flycheck.org/en/latest/languages.html#flycheck-languages
@@ -771,6 +979,12 @@ to automatically download elisp files required for 3rd party packages.
   :bind ("<f9>" . flycheck-mode)
   )
 
+
+#+end_src
+
+**** jump inside text
+
+#+begin_src emacs-lisp
 ;;;~ jump inside text
 
 (use-package ace-jump-mode
@@ -778,6 +992,12 @@ to automatically download elisp files required for 3rd party packages.
   :bind ("C-z" . ace-jump-mode)
   )
 
+
+#+end_src
+
+**** Display hexagecimal color strings with a background color
+
+#+begin_src emacs-lisp
 ;;;~ Display hexagecimal color strings  with a background color
 
 (use-package rainbow-mode
@@ -786,6 +1006,12 @@ to automatically download elisp files required for 3rd party packages.
   (add-hook 'prog-mode-hook 'rainbow-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-mode))
 
+
+#+end_src
+
+**** display delimiters in color
+
+#+begin_src emacs-lisp
 ;;;~ display delimiters in color
 
 (use-package rainbow-delimiters
@@ -874,6 +1100,13 @@ to automatically download elisp files required for 3rd party packages.
     :ensure t)
   )
 
+
+
+#+end_src
+
+**** show emacs keyshorcuts in minibuffer
+
+#+begin_src emacs-lisp
 ;;;~ show emacs keyshorcuts in minibuffer
 
 (use-package which-key
@@ -883,6 +1116,12 @@ to automatically download elisp files required for 3rd party packages.
   :config
   (which-key-mode))
 
+
+#+end_src
+
+**** search selected region in multiple browsers: engine-mode
+
+#+begin_src emacs-lisp
 ;;;~ search selected region in multiple browsers: engine-mode
 
 (use-package engine-mode
@@ -940,6 +1179,12 @@ A remastered version of the function `browse-url-firefox'."
 
   )
 
+
+#+end_src
+
+**** emacs REPL customization
+
+#+begin_src emacs-lisp
 ;;;~ emacs REPL customization  
 
 (use-package comint                   
@@ -950,6 +1195,12 @@ A remastered version of the function `browse-url-firefox'."
   (setq comint-scroll-to-bottom-on-output t)
   (setq comint-move-point-for-output t))
 
+
+#+end_src
+
+**** package to improve the searching menu: helm
+
+#+begin_src emacs-lisp
 ;;;~ package to improve the searching menu: helm
 
 (use-package helm
@@ -1017,6 +1268,12 @@ A remastered version of the function `browse-url-firefox'."
     )
   )
 
+
+#+end_src
+
+**** improve word search and lines highlighted
+
+#+begin_src emacs-lisp
 ;;;~ improve word search and lines highlighted
 
 (use-package swiper
@@ -1055,6 +1312,12 @@ A remastered version of the function `browse-url-firefox'."
     )
 )
 
+
+#+end_src
+
+**** autocompletion support
+
+#+begin_src emacs-lisp
 ;;;~ autocompletion support
 
 (use-package auto-complete
@@ -1075,6 +1338,12 @@ A remastered version of the function `browse-url-firefox'."
   ;;   )
   )
 
+
+#+end_src
+
+**** git support
+
+#+begin_src emacs-lisp
 ;;;~ git emacs
 
 (use-package magit
@@ -1084,12 +1353,22 @@ A remastered version of the function `browse-url-firefox'."
   :bind ("C-x g" . magit-status)
   )
 
+
+#+end_src
+
+**** python support
+
+#+begin_src emacs-lisp
 ;;;~ support to use multiple python versions
 
 (use-package pyenv-mode
   :ensure t
   )
 
+
+#+end_src
+
+#+begin_src emacs-lisp
 ;;;~ support for python virtual environments
 
 (use-package virtualenvwrapper
@@ -1127,6 +1406,10 @@ A remastered version of the function `browse-url-firefox'."
   (setq python-shell-completion-native-enable nil)
   )
 
+
+#+end_src
+
+#+begin_src emacs-lisp
 ;;;~ python auto-completiom
 
 (use-package jedi-core
@@ -1143,6 +1426,12 @@ A remastered version of the function `browse-url-firefox'."
   (setq jedi:complete-on-dot t)
   )
 
+
+#+end_src
+
+**** emacs snippets
+
+#+begin_src emacs-lisp
 ;;;~ emacs snippets
 
 (use-package yasnippet
@@ -1175,6 +1464,11 @@ A remastered version of the function `browse-url-firefox'."
   :bind  ("<C-f12>" . yas-minor-mode)
   )
 
+#+end_src
+
+**** org global customization
+
+#+begin_src emacs-lisp
 ;;;~ org global customization
 
 (use-package org
@@ -1335,6 +1629,15 @@ A remastered version of the function `browse-url-firefox'."
 
   ); end -- org --
 
+
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (25445 9533 153903 976000) :init (25445 9533 153563 25000) :config (25445 9533 153547 207000) :config-secs (0 0 218 562000) :init-secs (0 0 265 770000) :use-package-secs (0 0 659 736000)))
+
+**** emacs start server mode (if not started previously)
+
+#+begin_src emacs-lisp
 ;;;~ emacs start server mode (if not started previously)
 
 (use-package server
@@ -1343,3 +1646,8 @@ A remastered version of the function `browse-url-firefox'."
   (unless (server-running-p)
     (server-start))
   )
+
+
+#+end_src
+
+
