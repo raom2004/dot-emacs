@@ -34,7 +34,7 @@
   ;;;~ config files
   ;; (find-file "~/.config/openbox/rc.xml")
   (find-file "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
-  (find-file "~/Projects/archlinux/desktop/openbox/conky.org")
+  ;; (find-file "~/Projects/archlinux/desktop/openbox/conky.org")
   (find-file "~/Projects/archlinux/desktop/openbox/autostart")
 
 ;;;~ FRAME 3:
@@ -47,6 +47,18 @@
     (other-frame 1)
     (modify-frame-location-upper-right)
     (switch-to-buffer "*scratch*")
-    (find-file "~/Projects/dot-emacs/src-org/")
+    (find-file "~/Projects/")
     (other-frame 1)
     ))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(use-package)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

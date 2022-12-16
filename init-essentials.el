@@ -312,6 +312,13 @@
    ("C-x 5 O" . other-frame))
   )
 
+(use-package tramp
+  :ensure nil
+  :config
+  (setq tramp-shell-prompt-pattern "\\(?:^\\|\\)[^]#$%>
+]*#?[]#$%>].* *\\(\\[[[:digit:];]*[[:alpha:]] *\\)*")
+  )
+
 ;;;~ unset emacs predefined key bindings 
 
 (use-package bind-key
