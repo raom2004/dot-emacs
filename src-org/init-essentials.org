@@ -11,7 +11,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2022-12-16 21:18:12
+;; Updated: 2023-03-02 15:28:05
 ;; Source: init-essentials.org
 ;;
 #+end_src
@@ -25,7 +25,7 @@
 
 ** ACCELERATE EMACS STARTUP
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;;;; ================ Accelerate Emacs Startup =============
 
 (defvar file-name-handler-alist-original file-name-handler-alist)
@@ -946,15 +946,45 @@ to automatically download elisp files required for 3rd party packages.
   :ensure nil
   :load-path "~/.emacs.d/elisp/"
   :config
+
   (download-required-elisp-file
    "~/.emacs.d/elisp/flyspell.el"
    "https://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell-1.7q.el")
-  (dolist (hook '(text-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode 1))))
-  (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode -1))))
-  (add-hook 'elisp-mode-hook (lambda () (flyspell-prog-mode)))
-  (add-hook 'python-mode-hook (lambda () (flyspell-prog-mode)))
+
+  ;; (dolist (hook '(text-mode-hook))
+  ;;   (add-hook hook (lambda () (flyspell-mode 1))))
+  ;; (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+  ;;   (add-hook hook (lambda () (flyspell-mode -1))))
+  ;; (add-hook 'elisp-mode-hook (lambda () (flyspell-prog-mode)))
+  ;; (add-hook 'python-mode-hook (lambda () (flyspell-prog-mode)))
+  (setq flyspell-issue-message-flag nil) ;; do not show messages when check
+  (defun flyspell-on-for-buffer-type ()
+    "Enable Flyspell appropriately for the major mode of the current buffer.  Uses `flyspell-prog-mode' for modes derived from `prog-mode', so only strings and comments get checked.  All other buffers get `flyspell-mode' to check all text.  If flyspell is already enabled, does nothing."
+    (interactive)
+    (if (not (symbol-value flyspell-mode)) ; if not already on
+	(progn
+	  (if (derived-mode-p 'prog-mode)
+	      (progn
+		(message "Flyspell on (code)")
+		(flyspell-prog-mode))
+	    ;; else
+	    (progn
+	      (message "Flyspell on (text)")
+	      (flyspell-mode 1)))
+	  ;; I tried putting (flyspell-buffer) here but it didn't seem to work
+	  )))
+  
+  (defun flyspell-toggle ()
+    "Turn Flyspell on if it is off, or off if it is on.  When turning on, it uses `flyspell-on-for-buffer-type' so code-vs-text is handled appropriately."
+    (interactive)
+    (if (symbol-value flyspell-mode)
+	(progn ; flyspell is on, turn it off
+	  (message "Flyspell off")
+	  (flyspell-mode -1))
+					; else - flyspell is off, turn it on
+      (flyspell-on-for-buffer-type)))
+
+      (global-set-key (kbd "C-c f") 'flyspell-toggle)
   )
 
 
@@ -1134,12 +1164,18 @@ to automatically download elisp files required for 3rd party packages.
 
   (defengine dictionary
     "https://www.dictionary.com/browse/%s"
-    :keybinding "D")
-  (defengine duckduckgo
-    "https://duckduckgo.com/?q=%s"
     :keybinding "d")
+  (defengine leo-dictionary
+    "https://dict.leo.org/spanisch-deutsch/%s"
+    :keybinding "l")
+  (defengine translator
+    "https://translate.google.com/?sl=de&tl=es&text=%s"
+    :keybinding "t")
   (defengine github
     "https://github.com/search?ref=simplesearch&q=%s")
+  (defengine duckduckgo
+    "https://duckduckgo.com/?q=%s"
+    :keybinding "D")
   (defengine google
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
     :keybinding "G")
@@ -1439,9 +1475,13 @@ A remastered version of the function `browse-url-firefox'."
   :hook ((prog-mode . yas-minor-mode)
 	 (org-mode . yas-minor-mode))
 
-  ;;;~use pre-build snippets collection
-
+  ;;;~ 1. use pre-build snippets collection
   ;; :ensure yasnippet-snippets
+
+  ;;;~ 2. download custom snippets from github
+  :ensure-system-package
+  ("~/.emacs.d/snippets/org-mode/local-variables_org" .
+   "git clone https://github.com/raom2004/snippets ~/.emacs.d/snippets")
 
   :init
   ;;;~ use custom snippets collection
@@ -1477,6 +1517,12 @@ A remastered version of the function `browse-url-firefox'."
 	 ("C-c c" . org-capture)
 	 ("C-c l" . org-store-link)
 	 )
+
+  ;;;~ download notes.org file from github
+  :ensure-system-package
+  ("~/Documents/org/notes.org" .
+   "git clone https://github.com/raom2004/notes ~/Documents/org")
+
   ;; :init
   :config
 
@@ -1522,12 +1568,21 @@ A remastered version of the function `browse-url-firefox'."
 	    #'(lambda()
 		(add-hook
 		 'write-contents-functions 'ra/src-org-update-fields)) nil)
-
-
+  
+  ;;;~ set path to org directory
+  (setq org-directory
+        (expand-file-name "../Documents/org" user-emacs-directory))
+  ;;;~ set path to org files
+  (setq org-agenda-files
+	(expand-file-name "../Documents/org/todo.org" user-emacs-directory))
+  (setq org-default-notes-file
+	(expand-file-name "../Documents/org/notes.org" user-emacs-directory))
+  ;;;~ set persistent org mode clock in history
+  (setq org-clock-persist 'history)
+  (setq org-clock-persist-file
+	(expand-file-name "../config/org-clock-save.org" user-emacs-directory))
+  
   ;;;~ org basic customizations
-
-  ;; (setq org-directory
-  ;;       (expand-file-name "../documents/org" user-emacs-directory))
   (setq org-adapt-indentation nil) 
   (setq org-confirm-babel-evaluate nil)
   (setq org-confirm-elisp-link-function nil)
