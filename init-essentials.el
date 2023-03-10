@@ -5,8 +5,8 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-03-02 15:28:05
-;; Source: init-essentials.org
+;; Updated: 2023-03-10 12:27:00
+;; Source: init-essentials-hotfix-path.org
 ;;
 
 ;;;; Code:
@@ -1107,6 +1107,12 @@ A remastered version of the function `browse-url-firefox'."
   ;; :ensure-system-package
   ;; (virtualenvwrapper . "pip install virtualenvwrapper")
   :init
+  ;;;~ set path
+  (setenv "PATH"
+	  (concat (getenv "PATH") ":" (getenv "HOME") "/.local/bin"))
+  (setq exec-path
+	(append exec-path
+		`(,(concat (getenv "HOME") "/.local/bin"))))
   ;;;~ set python virtual environments location
   (setq venv-location "~/.virtualenvs")
   :config
