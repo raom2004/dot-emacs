@@ -5,8 +5,8 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-03-10 12:27:00
-;; Source: init-essentials-hotfix-path.org
+;; Updated: 2023-03-19 00:12:41
+;; Source: init-essentials-python-spaces.org
 ;;
 
 ;;;; Code:
@@ -683,6 +683,12 @@ fill the rest of the line with the active comment symbol 'comment-start'."
 	 ("<C-f8>" . compare-windows))
   )
 
+(use-package sh-script
+  :ensure nil
+  :config
+  (setq sh-basic-offset 2)
+  )
+
 ;;;; (3/3) THIRD PARTY PACKAGES ----------------------------
 
 ;;;~ support to download global binaries required by third party packages
@@ -1064,26 +1070,6 @@ A remastered version of the function `browse-url-firefox'."
     )
 )
 
-;;;~ autocompletion support
-
-(use-package auto-complete
-  :ensure t
-  :defer t
-  :init
-  ;; don't break if not installed 
-  (when (require 'auto-complete-config nil 'noerror) 
-    (add-to-list 'ac-dictionary-directories 
-		 (expand-file-name "ac-dict" user-emacs-directory))
-    (setq ac-comphist-file
-	  (expand-file-name "ac-comphist.dat" user-emacs-directory))
-    (ac-config-default))
-  (load "auto-complete-config")
-  ;; (progn
-  ;;   (ac-config-default)
-  ;;   (global-auto-complete-mode t)
-  ;;   )
-  )
-
 ;;;~ git emacs
 
 (use-package magit
@@ -1130,32 +1116,38 @@ A remastered version of the function `browse-url-firefox'."
      "biopython" "pip install epc jedi pytz biopython")
     )
 
-  (setq-default python-indent-offset 2) ;4 (deprecated 2021-01-21)
-  ;; set python guess indent
-  (setq python-indent-guess-indent-offset t)
-  ;; silence the warning of python guess indent
-  (setq python-indent-guess-indent-offset-verbose nil)
-  ;; if you want interactive shell support
   (venv-initialize-interactive-shells)
   ;; if you want eshell support
   (venv-initialize-eshell)
   (setq python-shell-completion-native-enable nil)
   )
 
-;;;~ python auto-completiom
-
-(use-package jedi-core
+;;;~ autocompletion support
+(use-package company
   :ensure t
-  :config
-  (setq python-environment-directory "~/.virtualenvs")
+  :init
+  (global-company-mode)
   )
 
-
-(use-package jedi
+(use-package company-jedi
   :ensure t
-  :hook (python-mode . jedi:setup)
-  :config
-  (setq jedi:complete-on-dot t)
+  :init
+  ;; (add-to-list 'company-backends 'company-jedi)
+  (defun my/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+  (add-hook 'python-mode-hook 'my/python-mode-hook)
+  )
+
+(use-package python
+  :ensure nil
+  :init
+  (setq-default python-indent-offset 4)
+  ;; set python guess indent
+  (setq python-indent-guess-indent-offset t)
+  ;; silence the warning of python guess indent
+  (setq python-indent-guess-indent-offset-verbose t)
+  ;; if you want interactive shell support
+  :hook ((python-mode . jedi:setup))
   )
 
 ;;;~ emacs snippets
