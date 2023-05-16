@@ -40,9 +40,9 @@
 ;;;~ FRAME 2: open openbox configuration files in new frame
 (progn
   (make-frame)
-  (switch-to-buffer "*scratch*")
-  (end-of-buffer)
   (other-frame 1)
+  (switch-to-buffer-other-frame "*scratch*")
+  (end-of-buffer)
   ;;;~ config files
   ;; (find-file "~/.config/openbox/rc.xml")
   (defun raom/find-file-exist-p (file) 
@@ -56,37 +56,32 @@
   )
 
 ;;;~ FRAME 3:
-(progn
-  (make-frame)
-  (other-frame 2)
-  (modify-frame-location-upper-right)
+;; (progn
+;;   (make-frame)
+;;   (other-frame 2)
+;;   (modify-frame-location-upper-right)
+;;   (other-frame -2)
+;;   )
   
   ;; (other-frame 3)
-  (add-hook 'emacs-startup-hook
-	    #'(lambda () (interactive)
-		(raom/find-file-exist-p
-	     "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
-		(other-frame -1))
-	    )
-  ;; (add-hook 'emacs-startup-hook
-  ;; 	    #'(lambda ()
-  ;; 		(interactive)
-  ;; 		;; 		(find-file "~/Projects/")
-  ;; 		))
+(add-hook 'emacs-startup-hook
+	  #'(lambda () (interactive)
+	      (make-frame)
+	      (other-frame 2)
+	      (modify-frame-location-upper-right)
+	      (raom/find-file-exist-p
+	       "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
+	      (other-frame -2)
+	      )
+	  ) ;; end frame 3
+
+;; (add-hook 'emacs-startup-hook
+;; 	    #'(lambda ()
+;; 		(interactive)
+;; 		;; 		(find-file "~/Projects/")
+;; 		))
   
-  ;; (ignore-errors
-  ;;   (add-hook 'emacs-startup-hook
+;; (ignore-errors
+;;   (add-hook 'emacs-startup-hook
   ;; 	      #'(lambda () (interactive) (other-frame 1))))
-  ) ;; end frame 3
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  ;; ) ;; end frame 3
