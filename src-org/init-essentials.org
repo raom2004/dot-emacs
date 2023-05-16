@@ -11,8 +11,8 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-03-10 12:27:00
-;; Source: init-essentials-hotfix-path.org
+;; Updated: 2023-05-16 16:33:29
+;; Source: init-essentials.org
 ;;
 #+end_src
 
@@ -560,10 +560,12 @@ A reference of the list options available, can be found here
 
   (let*
       ((calculated-frame-height
-  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 50))
+  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 54))
+       (window-border 2)
        (calculated-frame-width
   	(- (/ (caddr (frame-monitor-workarea)) 3)
-	   (cdr (assoc 'scroll-bar-width (frame-parameters)))))
+	   (cdr (assoc 'scroll-bar-width (frame-parameters)))
+	   window-border))
        (frame-position-list '())
        (positions (/ (caddr (frame-monitor-workarea)) 3))
        (wm--info (shell-command-to-string "wmctrl -m"))
@@ -885,6 +887,26 @@ fill the rest of the line with the active comment symbol 'comment-start'."
   )
 #+end_src
 
+**** sh indenation
+
+#+begin_src emacs-lisp
+;;;~ sh indentation
+(use-package sh-script
+  :ensure nil
+  :config (setq sh-basic-offset 2)
+ )
+#+end_src
+
+**** configure warnings
+
+#+begin_src emacs-lisp
+;;;~ configure warnings
+(use-package warnings
+  :ensure nil
+  :config
+  (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
+  )
+#+end_src
 
 *** (3/3) THIRD PARTY PACKAGES
 
@@ -1486,8 +1508,14 @@ A remastered version of the function `browse-url-firefox'."
 
   ;;;~ 2. download custom snippets from github
   :ensure-system-package
-  ("~/.emacs.d/snippets/org-mode/local-variables_org" .
-   "git clone https://github.com/raom2004/snippets ~/.emacs.d/snippets")
+  (
+   ;; create source folder "snippets" if it do not exists
+   ("~/Projects/snippets/README.org" .
+    "git clone https://github.com/raom2004/snippets $HOME/Projects/snippets")
+   ;; create a symbolic link to source folder if it do not exists 
+   ("~/.emacs.d/snippets/README.org" .
+    "rm -d ~/.emacs.d/snippets && ln -s ~/Projects/snippets $_")
+   )
 
   :init
   ;;;~ use custom snippets collection
@@ -1511,6 +1539,35 @@ A remastered version of the function `browse-url-firefox'."
   )
 
 #+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (25688 42929 315042 783000) :init (25688 42929 315002 875000) :init-secs (0 0 9265 865000) :use-package-secs (0 0 9315 886000) :config (25688 42929 314991 436000) :config-secs (0 0 9143 277000)))
+
+**** pandoc
+
+source: https://github.com/emacsorphanage/ox-pandoc
+
+#+begin_src emacs-lisp
+;;;~ support for pandoc
+
+(use-package ox-pandoc
+  :ensure t
+  :init
+  ;; default options for all output formats
+  (setq org-pandoc-options '((standalone . t)))
+  ;; cancel above settings only for 'docx' format
+  ;; (setq org-pandoc-options-for-docx '((standalone . nil)))
+  ;; special settings for beamer-pdf and latex-pdf exporters
+  ;; (setq org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex")))
+  ;; (setq org-pandoc-options-for-latex-pdf '((pdf-engine . "pdflatex")))
+  ;; special extensions for markdown_github output
+  ;; (setq org-pandoc-format-extensions
+	;; '(markdown_github+pipe_tables+raw_html))
+  )
+
+
+#+end_src
+
 
 **** org global customization
 
@@ -1565,6 +1622,20 @@ A remastered version of the function `browse-url-firefox'."
 			   "/home/angel/Projects/dot-emacs/src-org/"))
       (ra/org-update-updated)
       (ra/org-update-source)))
+
+  ;;;~ functions to update fields in org files (/Projects/dot-emacs/src-org)
+  ;;;~  source: https://emacs.stackexchange.com/questions/28871/how-to-remove-m-from-org-babel-code-block-executing-on-linux-from-windows-os
+
+  (defadvice org-babel-sh-evaluate (around set-shell activate)
+    "Add header argument :file-coding that sets the buffer-file-coding-system."
+    (let ((file-coding-param (cdr (assoc :file-coding params))))
+      (if file-coding-param
+          (let ((file-coding (intern file-coding-param))
+		(default-file-coding (default-value 'buffer-file-coding-system)))
+            (setq-default buffer-file-coding-system file-coding)
+            ad-do-it
+            (setq-default buffer-file-coding-system default-file-coding))
+	ad-do-it)))
 
   ;; :config
 

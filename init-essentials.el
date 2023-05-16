@@ -5,8 +5,8 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-03-19 00:12:41
-;; Source: init-essentials-python-spaces.org
+;; Updated: 2023-05-16 17:09:24
+;; Source: init-essentials-error-bindkey-set.org
 ;;
 
 ;;;; Code:
@@ -392,10 +392,12 @@
 
   (let*
       ((calculated-frame-height
-  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 50))
+  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 54))
+       (window-border 2)
        (calculated-frame-width
   	(- (/ (caddr (frame-monitor-workarea)) 3)
-	   (cdr (assoc 'scroll-bar-width (frame-parameters)))))
+	   (cdr (assoc 'scroll-bar-width (frame-parameters)))
+	   window-border))
        (frame-position-list '())
        (positions (/ (caddr (frame-monitor-workarea)) 3))
        (wm--info (shell-command-to-string "wmctrl -m"))
@@ -683,10 +685,17 @@ fill the rest of the line with the active comment symbol 'comment-start'."
 	 ("<C-f8>" . compare-windows))
   )
 
+;;;~ sh indentation
 (use-package sh-script
   :ensure nil
+  :config (setq sh-basic-offset 2)
+ )
+
+;;;~ configure warnings
+(use-package warnings
+  :ensure nil
   :config
-  (setq sh-basic-offset 2)
+  (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
   )
 
 ;;;; (3/3) THIRD PARTY PACKAGES ----------------------------
@@ -896,7 +905,19 @@ to automatically download elisp files required for 3rd party packages.
 
 (use-package engine-mode
   :ensure t
+  :init
+
+  ;;;~ hotfix error: void-function keymap-set
+  (defun engine/bind-key (engine-name keybinding)
+    (when keybinding
+      `(define-key engine-mode-prefixed-map (kbd ,keybinding)
+	 (quote ,(engine/function-name engine-name)))))
+  
   :config
+    (defun engine/bind-key (engine-name keybinding)
+    (when keybinding
+      `(define-key engine-mode-prefixed-map (kbd ,keybinding)
+	 (quote ,(engine/function-name engine-name)))))
 
   ;;;~ Activate Minor Mode
   
@@ -1070,6 +1091,26 @@ A remastered version of the function `browse-url-firefox'."
     )
 )
 
+;;;~ autocompletion support
+
+(use-package auto-complete
+  :ensure t
+  :defer t
+  :init
+  ;; don't break if not installed 
+  (when (require 'auto-complete-config nil 'noerror) 
+    (add-to-list 'ac-dictionary-directories 
+		 (expand-file-name "ac-dict" user-emacs-directory))
+    (setq ac-comphist-file
+	  (expand-file-name "ac-comphist.dat" user-emacs-directory))
+    (ac-config-default))
+  (load "auto-complete-config")
+  ;; (progn
+  ;;   (ac-config-default)
+  ;;   (global-auto-complete-mode t)
+  ;;   )
+  )
+
 ;;;~ git emacs
 
 (use-package magit
@@ -1116,38 +1157,32 @@ A remastered version of the function `browse-url-firefox'."
      "biopython" "pip install epc jedi pytz biopython")
     )
 
+  (setq-default python-indent-offset 2) ;4 (deprecated 2021-01-21)
+  ;; set python guess indent
+  (setq python-indent-guess-indent-offset t)
+  ;; silence the warning of python guess indent
+  (setq python-indent-guess-indent-offset-verbose nil)
+  ;; if you want interactive shell support
   (venv-initialize-interactive-shells)
   ;; if you want eshell support
   (venv-initialize-eshell)
   (setq python-shell-completion-native-enable nil)
   )
 
-;;;~ autocompletion support
-(use-package company
+;;;~ python auto-completiom
+
+(use-package jedi-core
   :ensure t
-  :init
-  (global-company-mode)
+  :config
+  (setq python-environment-directory "~/.virtualenvs")
   )
 
-(use-package company-jedi
-  :ensure t
-  :init
-  ;; (add-to-list 'company-backends 'company-jedi)
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
-  )
 
-(use-package python
-  :ensure nil
-  :init
-  (setq-default python-indent-offset 4)
-  ;; set python guess indent
-  (setq python-indent-guess-indent-offset t)
-  ;; silence the warning of python guess indent
-  (setq python-indent-guess-indent-offset-verbose t)
-  ;; if you want interactive shell support
-  :hook ((python-mode . jedi:setup))
+(use-package jedi
+  :ensure t
+  :hook (python-mode . jedi:setup)
+  :config
+  (setq jedi:complete-on-dot t)
   )
 
 ;;;~ emacs snippets
@@ -1162,8 +1197,14 @@ A remastered version of the function `browse-url-firefox'."
 
   ;;;~ 2. download custom snippets from github
   :ensure-system-package
-  ("~/.emacs.d/snippets/org-mode/local-variables_org" .
-   "git clone https://github.com/raom2004/snippets ~/.emacs.d/snippets")
+  (
+   ;; create source folder "snippets" if it do not exists
+   ("~/Projects/snippets/README.org" .
+    "git clone https://github.com/raom2004/snippets $HOME/Projects/snippets")
+   ;; create a symbolic link to source folder if it do not exists 
+   ("~/.emacs.d/snippets/README.org" .
+    "rm -d ~/.emacs.d/snippets && ln -s ~/Projects/snippets $_")
+   )
 
   :init
   ;;;~ use custom snippets collection
@@ -1186,6 +1227,23 @@ A remastered version of the function `browse-url-firefox'."
   :bind  ("<C-f12>" . yas-minor-mode)
   )
 
+;;;~ support for pandoc
+
+(use-package ox-pandoc
+  :ensure t
+  :init
+  ;; default options for all output formats
+  (setq org-pandoc-options '((standalone . t)))
+  ;; cancel above settings only for 'docx' format
+  ;; (setq org-pandoc-options-for-docx '((standalone . nil)))
+  ;; special settings for beamer-pdf and latex-pdf exporters
+  ;; (setq org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex")))
+  ;; (setq org-pandoc-options-for-latex-pdf '((pdf-engine . "pdflatex")))
+  ;; special extensions for markdown_github output
+  ;; (setq org-pandoc-format-extensions
+	;; '(markdown_github+pipe_tables+raw_html))
+  )
+
 ;;;~ org global customization
 
 (use-package org
@@ -1197,8 +1255,8 @@ A remastered version of the function `browse-url-firefox'."
 
   ;;;~ download notes.org file from github
   :ensure-system-package
-  ("~/Documents/org/notes.org" .
-   "git clone https://github.com/raom2004/notes ~/Documents/org")
+  ("~/Projects/notes/notes.org" .
+   "git clone https://github.com/raom2004/notes ~/Projects/notes")
 
   ;; :init
   :config
@@ -1236,6 +1294,20 @@ A remastered version of the function `browse-url-firefox'."
 			   "/home/angel/Projects/dot-emacs/src-org/"))
       (ra/org-update-updated)
       (ra/org-update-source)))
+
+  ;;;~ functions to update fields in org files (/Projects/dot-emacs/src-org)
+  ;;;~  source: https://emacs.stackexchange.com/questions/28871/how-to-remove-m-from-org-babel-code-block-executing-on-linux-from-windows-os
+
+  (defadvice org-babel-sh-evaluate (around set-shell activate)
+    "Add header argument :file-coding that sets the buffer-file-coding-system."
+    (let ((file-coding-param (cdr (assoc :file-coding params))))
+      (if file-coding-param
+          (let ((file-coding (intern file-coding-param))
+		(default-file-coding (default-value 'buffer-file-coding-system)))
+            (setq-default buffer-file-coding-system file-coding)
+            ad-do-it
+            (setq-default buffer-file-coding-system default-file-coding))
+	ad-do-it)))
 
   ;; :config
 
