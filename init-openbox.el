@@ -41,7 +41,8 @@
 (progn
   (make-frame)
   (other-frame 1)
-  (switch-to-buffer-other-frame "*scratch*")
+  ;; (switch-to-buffer-other-frame "*scratch*")
+  (switch-to-buffer "*scratch*")
   (end-of-buffer)
   ;;;~ config files
   ;; (find-file "~/.config/openbox/rc.xml")
@@ -53,6 +54,9 @@
    "~/Projects/dot-emacs/init-essentials.el")
   (raom/find-file-exist-p
    "~/Projects/archlinux/desktop/openbox/autostart")
+  (make-frame)
+  (other-frame 1)
+  (modify-frame-location-upper-right)
   )
 
 ;;;~ FRAME 3:
@@ -66,12 +70,9 @@
   ;; (other-frame 3)
 (add-hook 'emacs-startup-hook
 	  #'(lambda () (interactive)
-	      (make-frame)
-	      (other-frame 2)
-	      (modify-frame-location-upper-right)
 	      (raom/find-file-exist-p
 	       "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
-	      (other-frame -2)
+	      (other-frame 2)
 	      )
 	  ) ;; end frame 3
 
