@@ -37,12 +37,9 @@
 
 ;;;~ FRAME 2: open openbox configuration files in new frame
 (progn
-  ;; (switch-to-buffer-other-frame "*scratch*")
   (make-frame)
   (other-frame 1)
   (switch-to-buffer "*scratch*")
-  ;; ;;;~ config files
-  ;; ;; (find-file "~/.config/openbox/rc.xml")
   (defun raom/find-file-exist-p (file) 
     (ignore-errors (find-file-existing file) (read-only-mode 1)))
   (raom/find-file-exist-p
@@ -62,19 +59,6 @@
   (modify-frame-location-upper-right)
   )
   
-  ;; (other-frame 3)
-;; (add-hook 'emacs-startup-hook
-;; 	  #'(lambda () (interactive)
-;; 	      (other-frame 2)
-;; 	      )
-;; 	  ) ;; end frame 3
-
-;; (add-hook 'emacs-startup-hook
-;; 	    #'(lambda ()
-;; 		(interactive)
-;; 		;; 		(find-file "~/Projects/")
-;; 		))
-  
 (add-hook 'emacs-startup-hook
 	    #'(lambda ()
 		(interactive)
@@ -82,8 +66,3 @@
 		(next-line 4)
 		)
 	    )
-  
-;; (ignore-errors
-;;   (add-hook 'emacs-startup-hook
-  ;; 	      #'(lambda () (interactive) (other-frame 1))))
-  ;; ) ;; end frame 3
