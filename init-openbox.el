@@ -6,7 +6,6 @@
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
 ;; Updated: 2023-02-14 20:11:38
-;; Source: init-openbox.org
 ;;
 ;;;~ Description:
 ;;;~  emacs init file that include other relevant dot-files,
@@ -15,17 +14,16 @@
 
 
 (setq initial-scratch-message "# This buffer is for text that is not saved, and for org babel evaluation.
-# To create a file, visit it with \\[find-file] and enter text in its buffer.
-
-#+begin_src bash :results verbatim\n\n#+end_src
-")
+# To create a file, visit it with \\[find-file] and enter text in its buffer.\n\n#+begin_src bash :results verbatim\n\n#+end_src\n")
 
 ;;;~ FRAME 1: load custom init file: user-init-file
 (progn
   (org-mode)
   ;; (org-insert-structure-template "bash")
   ;;;~ set custom init file,and also automatically showed at startup 
+  ;; (setq user-init-file (buffer-file-name))
   (setq user-init-file "~/Projects/dot-emacs/init-openbox.el")
+  ;; (find-file "~/Projects/dot-emacs/init-openbox.el")
   ;;;~ load other init files:
   ;;;~  * basic configuration
   (load-file "~/Projects/dot-emacs/init-essentials.el")
@@ -39,13 +37,12 @@
 
 ;;;~ FRAME 2: open openbox configuration files in new frame
 (progn
+  ;; (switch-to-buffer-other-frame "*scratch*")
   (make-frame)
   (other-frame 1)
-  ;; (switch-to-buffer-other-frame "*scratch*")
   (switch-to-buffer "*scratch*")
-  (end-of-buffer)
-  ;;;~ config files
-  ;; (find-file "~/.config/openbox/rc.xml")
+  ;; ;;;~ config files
+  ;; ;; (find-file "~/.config/openbox/rc.xml")
   (defun raom/find-file-exist-p (file) 
     (ignore-errors (find-file-existing file) (read-only-mode 1)))
   (raom/find-file-exist-p
@@ -54,33 +51,37 @@
    "~/Projects/dot-emacs/init-essentials.el")
   (raom/find-file-exist-p
    "~/Projects/archlinux/desktop/openbox/autostart")
-  (make-frame)
-  (other-frame 1)
-  (modify-frame-location-upper-right)
+  (raom/find-file-exist-p
+   "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
   )
 
 ;;;~ FRAME 3:
-;; (progn
-;;   (make-frame)
-;;   (other-frame 2)
-;;   (modify-frame-location-upper-right)
-;;   (other-frame -2)
-;;   )
+(progn
+  (make-frame)
+  (other-frame 2)
+  (modify-frame-location-upper-right)
+  )
   
   ;; (other-frame 3)
-(add-hook 'emacs-startup-hook
-	  #'(lambda () (interactive)
-	      (raom/find-file-exist-p
-	       "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
-	      (other-frame 2)
-	      )
-	  ) ;; end frame 3
+;; (add-hook 'emacs-startup-hook
+;; 	  #'(lambda () (interactive)
+;; 	      (other-frame 2)
+;; 	      )
+;; 	  ) ;; end frame 3
 
 ;; (add-hook 'emacs-startup-hook
 ;; 	    #'(lambda ()
 ;; 		(interactive)
 ;; 		;; 		(find-file "~/Projects/")
 ;; 		))
+  
+(add-hook 'emacs-startup-hook
+	    #'(lambda ()
+		(interactive)
+		(other-frame -1)
+		(next-line 4)
+		)
+	    )
   
 ;; (ignore-errors
 ;;   (add-hook 'emacs-startup-hook
