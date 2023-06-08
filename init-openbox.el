@@ -21,7 +21,6 @@
   (org-mode)
   ;; (org-insert-structure-template "bash")
   ;;;~ set custom init file,and also automatically showed at startup 
-  ;; (setq user-init-file (buffer-file-name))
   (setq user-init-file "~/Projects/dot-emacs/init-openbox.el")
   ;; (find-file "~/Projects/dot-emacs/init-openbox.el")
   ;;;~ load other init files:
@@ -47,9 +46,9 @@
   (raom/find-file-exist-p
    "~/Projects/dot-emacs/init-essentials.el")
   (raom/find-file-exist-p
-   "~/Projects/archlinux/desktop/openbox/autostart")
-  (raom/find-file-exist-p
    "~/Projects/archlinux/desktop/openbox/shortcuts-openbox.sh")
+  (raom/find-file-exist-p
+   "~/Projects/archlinux/desktop/openbox/autostart")
   )
 
 ;;;~ FRAME 3:
@@ -62,6 +61,9 @@
 (add-hook 'emacs-startup-hook
 	    #'(lambda ()
 		(interactive)
+		;; switch user-init-file buffer
+		(switch-to-next-buffer)
+		;; set custom cursor location in scratch buffer
 		(other-frame -1)
 		(next-line 4)
 		)
