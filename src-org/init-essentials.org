@@ -11,7 +11,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-05-16 16:33:29
+;; Updated: 2023-06-08 11:28:52
 ;; Source: init-essentials.org
 ;;
 #+end_src
@@ -1583,8 +1583,10 @@ source: https://github.com/emacsorphanage/ox-pandoc
 
   ;;;~ download notes.org file from github
   :ensure-system-package
-  ("~/Documents/org/notes.org" .
-   "git clone https://github.com/raom2004/notes ~/Documents/org")
+  ;; ("~/Documents/org/notes.org" .
+  ;;  "git clone https://github.com/raom2004/notes ~/Documents/org")
+  ("~/Projects/notes/notes.org" .
+   "git clone https://github.com/raom2004/notes ~/Projects")
 
   ;; :init
   :config
@@ -1653,7 +1655,8 @@ source: https://github.com/emacsorphanage/ox-pandoc
   (setq org-agenda-files
 	(expand-file-name "../Documents/org/todo.org" user-emacs-directory))
   (setq org-default-notes-file
-	(expand-file-name "../Documents/org/notes.org" user-emacs-directory))
+	(expand-file-name "../Projects/notes/notes.org" user-emacs-directory))
+	;; (expand-file-name "../Documents/org/notes.org" user-emacs-directory))
   ;;;~ set persistent org mode clock in history
   (setq org-clock-persist 'history)
   (setq org-clock-persist-file

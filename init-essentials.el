@@ -5,8 +5,8 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-05-16 17:09:24
-;; Source: init-essentials-error-bindkey-set.org
+;; Updated: 2023-06-08 11:27:09
+;; Source: init-essentials-org-capture-notes-using-gitrepo.org
 ;;
 
 ;;;; Code:
@@ -905,19 +905,7 @@ to automatically download elisp files required for 3rd party packages.
 
 (use-package engine-mode
   :ensure t
-  :init
-
-  ;;;~ hotfix error: void-function keymap-set
-  (defun engine/bind-key (engine-name keybinding)
-    (when keybinding
-      `(define-key engine-mode-prefixed-map (kbd ,keybinding)
-	 (quote ,(engine/function-name engine-name)))))
-  
   :config
-    (defun engine/bind-key (engine-name keybinding)
-    (when keybinding
-      `(define-key engine-mode-prefixed-map (kbd ,keybinding)
-	 (quote ,(engine/function-name engine-name)))))
 
   ;;;~ Activate Minor Mode
   
@@ -1255,8 +1243,10 @@ A remastered version of the function `browse-url-firefox'."
 
   ;;;~ download notes.org file from github
   :ensure-system-package
+  ;; ("~/Documents/org/notes.org" .
+  ;;  "git clone https://github.com/raom2004/notes ~/Documents/org")
   ("~/Projects/notes/notes.org" .
-   "git clone https://github.com/raom2004/notes ~/Projects/notes")
+   "git clone https://github.com/raom2004/notes ~/Projects")
 
   ;; :init
   :config
@@ -1325,7 +1315,8 @@ A remastered version of the function `browse-url-firefox'."
   (setq org-agenda-files
 	(expand-file-name "../Documents/org/todo.org" user-emacs-directory))
   (setq org-default-notes-file
-	(expand-file-name "../Documents/org/notes.org" user-emacs-directory))
+	(expand-file-name "../Projects/notes/notes.org" user-emacs-directory))
+	;; (expand-file-name "../Documents/org/notes.org" user-emacs-directory))
   ;;;~ set persistent org mode clock in history
   (setq org-clock-persist 'history)
   (setq org-clock-persist-file
