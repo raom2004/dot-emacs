@@ -11,7 +11,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-06-08 11:28:52
+;; Updated: 2023-06-09 13:34:15
 ;; Source: init-essentials.org
 ;;
 #+end_src
@@ -1586,7 +1586,7 @@ source: https://github.com/emacsorphanage/ox-pandoc
   ;; ("~/Documents/org/notes.org" .
   ;;  "git clone https://github.com/raom2004/notes ~/Documents/org")
   ("~/Projects/notes/notes.org" .
-   "git clone https://github.com/raom2004/notes ~/Projects")
+   "git clone https://github.com/raom2004/notes ~/Projects/notes")
 
   ;; :init
   :config
