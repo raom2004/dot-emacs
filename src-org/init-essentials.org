@@ -11,7 +11,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-06-09 13:34:15
+;; Updated: 2023-06-10 15:57:57
 ;; Source: init-essentials.org
 ;;
 #+end_src
@@ -908,6 +908,34 @@ fill the rest of the line with the active comment symbol 'comment-start'."
   )
 #+end_src
 
+**** browse url in provate mode
+
+#+begin_src emacs-lisp
+;;;~ browse url in provate mode
+(use-package browse-url
+  :ensure nil
+  :config
+  (setq browse-url-browser-function #'browse-url-firefox-private-mode)
+  (defun browse-url-firefox-private-mode (url &optional new-window)
+    "Ask the Firefox WWW browser to load URL in `--private-mode'.
+A remastered version of the function `browse-url-firefox'."
+    (interactive (browse-url-interactive-arg "URL: "))
+    (setq url (browse-url-encode-url url))
+    (let* ((process-environment (browse-url-process-environment)))
+      (apply #'start-process
+             (concat "firefox " url) nil
+             browse-url-firefox-program
+             (append
+              browse-url-firefox-arguments
+              ;; (if (browse-url-maybe-new-window new-window)
+	      ;; 	(if browse-url-firefox-new-window-is-tab
+	      ;; 	    '("-new-tab")
+	      ;; 	  '("-new-window")))
+	      '("-private-window")
+              (list url)))))
+  )
+#+end_src
+
 *** (3/3) THIRD PARTY PACKAGES
 
 
@@ -1210,31 +1238,6 @@ to automatically download elisp files required for 3rd party packages.
   (defengine synonyms-thesaurus
     "https://www.thesaurus.com/browse/%s?s=t"
     :keybinding "s")
-  ;; (engine/set-keymap-prefix (kbd "M-ñ s")
-
-  ;;;~ set custom function to open URLs in private mode
-
-  (setq engine/browser-function 'browse-url-firefox-private-mode)
-
-  ;;;~ declare custom function to open URLs in private mode
-  (defun browse-url-firefox-private-mode (url &optional new-window)
-    "Ask the Firefox WWW browser to load URL in `--private-mode'.
-A remastered version of the function `browse-url-firefox'."
-    (interactive (browse-url-interactive-arg "URL: "))
-    (setq url (browse-url-encode-url url))
-    (let* ((process-environment (browse-url-process-environment)))
-      (apply #'start-process
-             (concat "firefox " url) nil
-             browse-url-firefox-program
-             (append
-              browse-url-firefox-arguments
-              ;; (if (browse-url-maybe-new-window new-window)
-	      ;; 	(if browse-url-firefox-new-window-is-tab
-	      ;; 	    '("-new-tab")
-	      ;; 	  '("-new-window")))
-	      '("-private-window")
-              (list url)))))
-
   )
 
 
