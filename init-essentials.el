@@ -5,7 +5,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-06-10 15:57:57
+;; Updated: 2023-06-10 16:10:55
 ;; Source: init-essentials.org
 ;;
 
@@ -938,17 +938,21 @@ to automatically download elisp files required for 3rd party packages.
   (defengine dictionary
     "https://www.dictionary.com/browse/%s"
     :keybinding "d")
-  (defengine leo-dictionary
-    "https://dict.leo.org/spanisch-deutsch/%s"
-    :keybinding "l")
-  (defengine translator
-    "https://translate.google.com/?sl=de&tl=es&text=%s"
-    :keybinding "t")
-  (defengine github
-    "https://github.com/search?ref=simplesearch&q=%s")
   (defengine duckduckgo
     "https://duckduckgo.com/?q=%s"
     :keybinding "D")
+  (defengine leo-dictionary
+    "https://dict.leo.org/spanisch-deutsch/%s"
+    :keybinding "l")
+  (defengine deepl-trnsltr
+    "https://www.deepl.com/translator#de/es/%s"
+    :keybinding "t")
+  (defengine google-trnsltr
+    "https://translate.google.com/?sl=de&tl=es&text=%s"
+    :keybinding "T")
+  (defengine github
+    "https://github.com/search?ref=simplesearch&q=%s"
+    :keybinding "g")
   (defengine google
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
     :keybinding "G")
