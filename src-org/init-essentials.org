@@ -11,7 +11,7 @@
 ;; Title: Emacs Init File with Essential Customization
 ;; Author: Ricardo Orbegozo
 ;; Created: 2020-04-13
-;; Updated: 2023-06-10 16:10:55
+;; Updated: 2023-07-27 10:33:34
 ;; Source: init-essentials.org
 ;;
 #+end_src
@@ -205,8 +205,9 @@ references: emacs startup summary ([[https://emacs.stackexchange.com/questions/1
   :bind (("C-ñ 1" . show-file-name)	       ; show file name path
 	 ("C-ñ ," . (lambda()(interactive)(insert "<"))); insert "<"
 	 ("C-ñ ." . (lambda()(interactive)(insert ">"))); insert ">"
-	 ("<f1>"  . call-last-kbd-macro)       ; kbd for emacs macro
 	 ("C-c d" . insert-date)               ; insert date HH:MM:SS
+	 ("<f1>"  . call-last-kbd-macro)       ; kbd for emacs macro
+	 ("<f7>"  . read-only-mode)            ; toggle read-write file mode
 	 ("<f12>" . display-line-numbers-mode)); show line numbers
   )
 
@@ -558,19 +559,53 @@ A reference of the list options available, can be found here
 
   ;;;~ frame geometry and location 
 
+         ;;; TODO: maybe is a good idea to rewrite the code like this
+       ;; (panel_height )
+       ;; (screen_width (caddr (frame-monitor-workarea)))
+       ;; (screen_height (cadddr (frame-monitor-workarea)))
+       ;; (width_border_left )
+       ;; (width_border_right )
+       ;; (height_tittle_bar )
+       ;; (height_bottom_border )
+       ;; (left )
+       ;; (middle )
+       ;; (right )
+       ;; (upper 0)
+       ;; (center (/ screen_height 3))
+       ;; (bottom (* center 2))
+       ;; (third )
+       ;; (one_third )
+       ;; (two_third )
+
   (let*
-      ((calculated-frame-height
-  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 54))
-       (window-border 2)
+      (
+       ;; Version 1: deprecated 2023-06-22 (for default windows theme)
+       ;; (calculated-frame-height
+       ;; 	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 54))
+       ;; (window-border 2)
+       ;; (calculated-frame-width
+       ;; 	(- (/ (caddr (frame-monitor-workarea)) 3)
+       ;; 	   (cdr (assoc 'scroll-bar-width (frame-parameters)))
+       ;; 	   window-border))
+       ;; (frame-position-list '())
+       ;; (positions (/ (caddr (frame-monitor-workarea)) 3))
+       ;; (wm--info (shell-command-to-string "wmctrl -m"))
+       ;; (wm--detected (and (string-match "^Name: \\(.*\\)" wm--info)
+       ;; 			 (print (match-string 1 wm--info)))))
+
+       ;; Version 2: works with starwars windows theme
+       (calculated-frame-height
+  	(- (* (/ (cadddr (frame-monitor-workarea)) 3) 2) 56)) ;;54))
+       (window-border 3)
        (calculated-frame-width
   	(- (/ (caddr (frame-monitor-workarea)) 3)
 	   (cdr (assoc 'scroll-bar-width (frame-parameters)))
-	   window-border))
+	   (* window-border 2))) ;; window-border)) ;; 622
        (frame-position-list '())
        (positions (/ (caddr (frame-monitor-workarea)) 3))
        (wm--info (shell-command-to-string "wmctrl -m"))
        (wm--detected (and (string-match "^Name: \\(.*\\)" wm--info)
-			 (print (match-string 1 wm--info)))))
+			  (print (match-string 1 wm--info)))))
     
     (dotimes (i 3)
       (add-to-list
@@ -1462,7 +1497,7 @@ to automatically download elisp files required for 3rd party packages.
   ;;;~ include python packages required for emacs : "epc jedi pytz"
   ;;;~ include python packages required for bioinformatics : "biopython"
     (venv-with-virtualenv-shell-command
-     "biopython" "pip install epc jedi pytz biopython")
+     "biopython" "pip install epc jedi pytz pubchempy rdkit biopython")
     )
 
   (setq-default python-indent-offset 2) ;4 (deprecated 2021-01-21)
@@ -1498,6 +1533,15 @@ to automatically download elisp files required for 3rd party packages.
   )
 
 
+#+end_src
+
+**** lua support
+
+#+begin_src emacs-lisp
+;;;~ lua support
+
+(use-package lua-mode
+  :ensure t)
 #+end_src
 
 **** emacs snippets
@@ -1574,7 +1618,6 @@ source: https://github.com/emacsorphanage/ox-pandoc
 
 
 #+end_src
-
 
 **** org global customization
 
@@ -1747,7 +1790,7 @@ source: https://github.com/emacsorphanage/ox-pandoc
      ;; (haskell    . t)
      ;; (js         . t)
      ;; (latex      . t)
-     ;; (lua      . t)
+     (lua      . t)
      (org        . t)
      ;; (prolog     . t)
      (python     . t)
